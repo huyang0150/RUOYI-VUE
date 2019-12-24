@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.survey.mapper.SurveyDetailMapper">
+    
+    <resultMap type="SurveyDetail" id="SurveyDetailResult">
+        <result property="id"    column="id"    />
+        <result property="surveyUserId"    column="survey_user_id"    />
+        <result property="satisfication"    column="satisfication"    />
+        <result property="transfer"    column="transfer"    />
+        <result property="considerationOne"    column="consideration_one"    />
+        <result property="considerationTwo"    column="consideration_two"    />
+        <result property="status"    column="status"    />
+        <result property="context"    column="context"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="gmtCreated"    column="gmt_created"    />
+        <result property="source"    column="source"    />
+    </resultMap>
+
+    <resultMap type="com.ruoyi.project.survey.domain.SurveyExportPO" id="SurveyExportDetail">
+        <result property="satisfication"    column="satisfication"    />
+        <result property="transfer"    column="transfer"    />
+        <result property="considerationOne"    column="consideration_one"    />
+        <result property="considerationTwo"    column="consideration_two"    />
+        <result property="mobile"    column="mobile"    />
+    </resultMap>
+
+    <sql id="selectSurveyDetailVo">
+        select id, survey_user_id, satisfication, transfer, consideration_one, consideration_two, status,
+        context, is_deleted, gmt_created, source from survey_detail
+    </sql>
+
+    <select id="selectSurveyDetailList" parameterType="SurveyDetail" resultMap="SurveyDetailResult">
+        <include refid="selectSurveyDetailVo"/>
+        <where>  
+            <if test="surveyUserId != null "> and survey_user_id = #{surveyUserId}</if>
+            <if test="satisfication != null "> and satisfication = #{satisfication}</if>
+            <if test="transfer != null "> and transfer = #{transfer}</if>
+            <if test="considerationOne != null "> and consideration_one = #{considerationOne}</if>
+            <if test="considerationTwo != null "> and consideration_two = #{considerationTwo}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="context != null  and context != ''"> and context = #{context}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+            <if test="gmtCreated != null "> and gmt_created = #{gmtCreated}</if>
+            <if test="source != null "> and source = #{source}</if>
+        </where>
+    </select>
+    
+    <select id="selectSurveyDetailById" parameterType="Long" resultMap="SurveyDetailResult">
+        <include refid="selectSurveyDetailVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSurveyDetail" parameterType="SurveyDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into survey_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="surveyUserId != null ">survey_user_id,</if>
+            <if test="satisfication != null ">satisfication,</if>
+            <if test="transfer != null ">transfer,</if>
+            <if test="considerationOne != null ">consideration_one,</if>
+            <if test="considerationTwo != null ">consideration_two,</if>
+            <if test="status != null ">status,</if>
+            <if test="context != null  and context != ''">context,</if>
+            <if test="isDeleted != null ">is_deleted,</if>
+            <if test="gmtCreated != null ">gmt_created,</if>
+            <if test="source != null ">source,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="surveyUserId != null ">#{surveyUserId},</if>
+            <if test="satisfication != null ">#{satisfication},</if>
+            <if test="transfer != null ">#{transfer},</if>
+            <if test="considerationOne != null ">#{considerationOne},</if>
+            <if test="considerationTwo != null ">#{considerationTwo},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="context != null  and context != ''">#{context},</if>
+            <if test="isDeleted != null ">#{isDeleted},</if>
+            <if test="gmtCreated != null ">#{gmtCreated},</if>
+            <if test="source != null ">#{source},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSurveyDetail" parameterType="SurveyDetail">
+        update survey_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="surveyUserId != null ">survey_user_id = #{surveyUserId},</if>
+            <if test="satisfication != null ">satisfication = #{satisfication},</if>
+            <if test="transfer != null ">transfer = #{transfer},</if>
+            <if test="considerationOne != null ">consideration_one = #{considerationOne},</if>
+            <if test="considerationTwo != null ">consideration_two = #{considerationTwo},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="context != null  and context != ''">context = #{context},</if>
+            <if test="isDeleted != null ">is_deleted = #{isDeleted},</if>
+            <if test="source != null ">source = #{source},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSurveyDetailById" parameterType="Long">
+        delete from survey_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteSurveyDetailByIds" parameterType="String">
+        delete from survey_detail where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectSurveyDetailByUserId" parameterType="Long" resultMap="SurveyDetailResult">
+        <include refid="selectSurveyDetailVo"/>
+        where survey_user_id = #{userId}
+        and is_deleted = 0
+        limit 1
+    </select>
+
+    <select id="selectSurveyExportDetailList" resultMap="SurveyExportDetail">
+        SELECT su.mobile, sd.satisfication, sd.transfer, sd.consideration_one,sd.consideration_two
+        FROM survey_user su
+        inner join survey_detail sd
+        on su.id = sd.survey_user_id
+        left join survey_coupon sc
+        on sc.id = su.coupon_id
+        <where>
+            su.id is not null
+            and sd.id is not null
+            and sc.id is not null
+            <if test="start != null "> <![CDATA[ and sd.gmt_created >= #{start} ]]></if>
+            <if test="end != null "> <![CDATA[ and sd.gmt_created <= #{end} ]]></if>
+            <if test="source != null  and source != ''"> and sd.source = #{source}</if>
+            and type = sc.type
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.survey.mapper.SurveyCouponMapper">
+
+    <resultMap type="SurveyCoupon" id="SurveyCouponResult">
+        <result property="id"    column="id"    />
+        <result property="coupon"    column="coupon"    />
+        <result property="available"    column="available"    />
+        <result property="total"    column="total"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectSurveyCouponVo">
+        select id, coupon, available, total, type from survey_coupon
+    </sql>
+
+    <select id="selectSurveyCouponList" parameterType="SurveyCoupon" resultMap="SurveyCouponResult">
+        <include refid="selectSurveyCouponVo"/>
+        <where>
+            <if test="coupon != null  and coupon != ''"> and coupon = #{coupon}</if>
+            <if test="available != null "> and available = #{available}</if>
+            <if test="total != null "> and total = #{total}</if>
+            <if test="type != null "> and type = #{type}</if>
+        </where>
+    </select>
+
+    <select id="selectSurveyCouponById" parameterType="Long" resultMap="SurveyCouponResult">
+        <include refid="selectSurveyCouponVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSurveyCoupon" parameterType="SurveyCoupon" useGeneratedKeys="true" keyProperty="id">
+        insert into survey_coupon
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coupon != null  and coupon != ''">coupon,</if>
+            <if test="available != null ">available,</if>
+            <if test="total != null ">total,</if>
+            <if test="type != null ">type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coupon != null  and coupon != ''">#{coupon},</if>
+            <if test="available != null ">#{available},</if>
+            <if test="total != null ">#{total},</if>
+            <if test="type != null ">#{type},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSurveyCoupon" parameterType="SurveyCoupon">
+        update survey_coupon
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coupon != null  and coupon != ''">coupon = #{coupon},</if>
+            <if test="available != null ">available = #{available},</if>
+            <if test="total != null ">total = #{total},</if>
+            <if test="type != null ">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSurveyCouponById" parameterType="Long">
+        delete from survey_coupon where id = #{id}
+    </delete>
+
+    <delete id="deleteSurveyCouponByIds" parameterType="String">
+        delete from survey_coupon where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="occupyCoupon" parameterType="Integer">
+        update survey_coupon
+        <set>
+            available = available - 1
+        </set>
+        where type = #{type}
+        and available > 0
+    </update>
+
+    <update id="releaseCoupon" parameterType="Integer">
+        update survey_coupon
+        <set>
+            available = available + 1
+        </set>
+        where type = #{type}
+        and total > available
+    </update>
+
+    <select id="getSurveyCouponByType" parameterType="Integer" resultMap="SurveyCouponResult">
+        <include refid="selectSurveyCouponVo"/>
+        where type = #{type}
+        limit 1
+    </select>
+
+</mapper>

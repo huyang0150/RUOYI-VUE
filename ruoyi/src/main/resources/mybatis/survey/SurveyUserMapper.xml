@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.survey.mapper.SurveyUserMapper">
+    
+    <resultMap type="SurveyUser" id="SurveyUserResult">
+        <result property="id"    column="id"    />
+        <result property="mobile"    column="mobile"    />
+        <result property="couponId"    column="coupon_id"    />
+        <result property="isSend"    column="is_send"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectSurveyUserVo">
+        select id, mobile, coupon_id, is_send, is_deleted from survey_user
+    </sql>
+
+    <select id="selectSurveyUserList" parameterType="SurveyUser" resultMap="SurveyUserResult">
+        <include refid="selectSurveyUserVo"/>
+        <where>  
+            <if test="mobile != null  and mobile != ''"> and mobile = #{mobile}</if>
+            <if test="couponId != null  and couponId != ''"> and coupon_id = #{couponId}</if>
+            <if test="isSend != null "> and is_send = #{isSend}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+        </where>
+    </select>
+    
+    <select id="selectSurveyUserById" parameterType="Long" resultMap="SurveyUserResult">
+        <include refid="selectSurveyUserVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSurveyUser" parameterType="SurveyUser" useGeneratedKeys="true" keyProperty="id">
+        insert into survey_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mobile != null  and mobile != ''">mobile,</if>
+            <if test="couponId != null  and couponId != ''">coupon_id,</if>
+            <if test="isSend != null ">is_send,</if>
+            <if test="isDeleted != null ">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mobile != null  and mobile != ''">#{mobile},</if>
+            <if test="couponId != null  and couponId != ''">#{couponId},</if>
+            <if test="isSend != null ">#{isSend},</if>
+            <if test="isDeleted != null ">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSurveyUser" parameterType="SurveyUser">
+        update survey_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="mobile != null  and mobile != ''">mobile = #{mobile},</if>
+            <if test="couponId != null  and couponId != ''">coupon_id = #{couponId},</if>
+            <if test="isSend != null ">is_send = #{isSend},</if>
+            <if test="isDeleted != null ">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSurveyUserById" parameterType="Long">
+        delete from survey_user where id = #{id}
+    </delete>
+
+    <delete id="deleteSurveyUserByIds" parameterType="String">
+        delete from survey_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectSurveyUserByMobile" parameterType="String" resultMap="SurveyUserResult">
+        <include refid="selectSurveyUserVo"/>
+        where mobile = #{mobile}
+        and is_deleted = 0
+    </select>
+
+    <select id="selectTwentyList" parameterType="String" resultMap="SurveyUserResult">
+        select su.* from survey_user su
+        inner join survey_detail sd
+        on su.id = sd.survey_user_id
+        where
+        su.is_deleted =0
+        and su.is_send =1
+        and sd.is_deleted=0
+        <if test="source != null  and source != ''"> and sd.source = #{source}</if>
+    </select>
+    
+</mapper>
