@@ -24,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="considerationOne"    column="consideration_one"    />
         <result property="considerationTwo"    column="consideration_two"    />
         <result property="mobile"    column="mobile"    />
+        <result property="source"    column="source"    />
     </resultMap>
 
     <sql id="selectSurveyDetailVo">
@@ -115,7 +116,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectSurveyExportDetailList" resultMap="SurveyExportDetail">
-        SELECT su.mobile, sd.satisfication, sd.transfer, sd.consideration_one,sd.consideration_two
+        SELECT su.mobile, sd.satisfication, sd.transfer, sd.consideration_one,sd.consideration_two,sd.source
         FROM survey_user su
         inner join survey_detail sd
         on su.id = sd.survey_user_id

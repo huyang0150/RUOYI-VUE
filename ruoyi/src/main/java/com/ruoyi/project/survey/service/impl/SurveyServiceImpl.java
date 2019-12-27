@@ -181,7 +181,7 @@ public class SurveyServiceImpl implements ISurveyService
             return null;
         }
         SurveyExportBO bo = new SurveyExportBO();
-        bo.setMobile(po.getMobile());
+        bo.setMobile(po.getMobile()+"("+CheckUtils.checkMobieOperator(po.getMobile()).getName()+")");
         SatisfactionEnum saticfication = SatisfactionEnum.getByCode(po.getSatisfication());
         bo.setSatisficationDesc(saticfication == null ? null: saticfication.getName());
         bo.setTransferDesc(po.getTransfer() == true ? "是" : "否");
@@ -191,6 +191,7 @@ public class SurveyServiceImpl implements ISurveyService
             TransferOperatorConsiderationsEnum two = TransferOperatorConsiderationsEnum.getByCode(po.getConsiderationTwo());
             bo.setConsiderationTwoDesc( two == null ? null : two.getName());
         }
+        bo.setSource(po.getSource());
         return bo;
     }
 }

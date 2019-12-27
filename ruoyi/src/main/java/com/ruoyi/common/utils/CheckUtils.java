@@ -1,5 +1,6 @@
 package com.ruoyi.common.utils;
 
+import com.ruoyi.common.enums.MobileOperatorEnum;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.lang.management.ManagementFactory;
@@ -39,6 +40,31 @@ public class CheckUtils extends org.apache.commons.lang3.time.DateUtils
      * 手机号正则 仅校验1开头的11位数字
      */
     private static final String MOBILE_REGEX = "^1\\d{10}$";
+
+
+    /**
+     * 中国联通
+     **/
+    private static final String[] CHINA_UNICOM_ARRAY = {"132","156","155","185","130","131","146","166","10646","186",
+            "145","14000","175","176","10145"};
+
+    /**
+     * 中国电信
+     **/
+    private static final String[] CHINA_TELECOM_ARRAY = {"180","199","177","153","181","189","191","1740","173","1701",
+            "174","1349","1700","149","1702","133","162"};
+
+    /**
+     * 中国移动
+     **/
+    private static final String[] CHINA_MOBILE_ARRAY = {"187","183","165","198","178","172","184","1703","1706","1705",
+            "139","158","159","138","135","134","137","136","148","150","147","152","188","182","151","157"};
+
+    /**
+     * 虚拟运营商
+     **/
+    private static final String[] VIRTUAL_MOBILE_ARRAY = {"170","167","1709","171","1707","1704","1708"};
+
 
     /**
      * 获取当前Date型日期
@@ -173,5 +199,38 @@ public class CheckUtils extends org.apache.commons.lang3.time.DateUtils
 //        Pattern phonePattern = Pattern.compile(TELEPHONE_REGEX);
 //        return mobilePattern.matcher(mobile).matches() || phonePattern.matcher(mobile).matches();
         return mobilePattern.matcher(mobile).matches();
+    }
+
+    public static MobileOperatorEnum checkMobieOperator(String mobile){
+        if(!checkMobile(mobile)){
+            return MobileOperatorEnum.OTHER;
+        }
+
+        for(String begin : CHINA_UNICOM_ARRAY){
+            if(mobile.startsWith(begin)){
+                return MobileOperatorEnum.LIANTONG;
+            }
+        }
+
+        for(String begin : CHINA_TELECOM_ARRAY){
+            if(mobile.startsWith(begin)){
+                return MobileOperatorEnum.DIANXIN;
+            }
+        }
+
+        for(String begin : CHINA_MOBILE_ARRAY){
+            if(mobile.startsWith(begin)){
+                return MobileOperatorEnum.YIDONG;
+            }
+        }
+
+        for(String begin : VIRTUAL_MOBILE_ARRAY){
+            if(mobile.startsWith(begin)){
+                return MobileOperatorEnum.VIRTUAL;
+            }
+        }
+
+        return MobileOperatorEnum.OTHER;
+
     }
 }

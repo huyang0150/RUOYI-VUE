@@ -20,6 +20,8 @@ public class SurveyExportPO
 
     private Integer considerationTwo;
 
+    private String source;
+
     public Integer getSatisfication() {
         return satisfication;
     }
@@ -58,6 +60,14 @@ public class SurveyExportPO
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
 }

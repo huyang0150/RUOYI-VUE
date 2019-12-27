@@ -27,6 +27,9 @@ public class SurveyExportBO
     @Excel(name = "您现在选择运营商主要考虑的因素有哪些(2)", cellType = Excel.ColumnType.STRING)
     private String considerationTwoDesc;
 
+    @Excel(name = "渠道", cellType = Excel.ColumnType.STRING)
+    private String source;
+
     public String getSatisficationDesc() {
         return satisficationDesc;
     }
@@ -65,6 +68,14 @@ public class SurveyExportBO
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
 }
